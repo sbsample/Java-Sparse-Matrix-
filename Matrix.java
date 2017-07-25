@@ -13,7 +13,7 @@ public class Matrix
 		matrixArray = new List[size];
 		for (int i = 0; i <= size; i++)
 		{
-			matrixArray[i] = new List;
+			matrixArray[i] = new List();
 		}
 	}
 
@@ -23,6 +23,7 @@ public class Matrix
 		double value;
 
 		// Entry Object and Contructors
+
 		Entry(int column, double value)
 		{
 			this.column = column;
@@ -46,9 +47,9 @@ public class Matrix
 
 		//toString()
 		// prints Entry Object, overrides object toString
-		public toString()
+		public String toString()
 		{
-			System.out.printf("(%d %d)", column, value);
+			return ( "(" + column +", "+ value +")" );
 		}
 	}
 
@@ -72,6 +73,6 @@ public class Matrix
 	// does the argument equal the the existing object
 	public boolean equals(Object X)
 	{
-
+		return false;
 	}
 }

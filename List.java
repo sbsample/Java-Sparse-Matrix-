@@ -429,18 +429,7 @@ public class List
 		return output;
 	}
 
-	public List copy()
-	{
-		List l = new List();
-		Node temp = front;
-		for (int i = 0; i <= length - 1; i++)
-		{
-			l.append(temp.value);
-			temp = temp.next;
-		}
-
-		return l;
-	}
+	
 
 
 	
