@@ -6,7 +6,7 @@ public class Matrix
 
 	//Matrix constructor
 	// list Objects contained in an array.
-	Matrix(int size)
+	public Matrix(int size)
 	{
 		this.size = size;
 		nonZero = 0;
@@ -54,6 +54,6 @@ public class Matrix
 
 	// Acess functions
 
-	getSize()
+	getSize();
 
 }

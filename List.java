@@ -31,12 +31,12 @@ public class List
 	}
 // Access Procedures
 
-	public Object length()
+	public int length()
 	{
 		return length;
 	}
 
-	public Object index()
+	public int index()
 	{
 		if (length < 0)
 		{
@@ -95,9 +95,10 @@ public class List
 	
 	}
 
-	public boolean equals(Object L)
+	public boolean equals(Object M)
 	{
-		Node thisFinder = front;
+		List L = (List) M;
+		Node thisFinder = this.front;
 		Node lFinder = (Node) L.front;
 		if (L == null)
 		{
