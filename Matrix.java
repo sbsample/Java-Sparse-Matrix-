@@ -16,12 +16,12 @@ public class Matrix
 			matrixArray[i] = new List;
 		}
 	}
-	
+
 	private class Entry
 	{
 		int column;
 		double value;
-	
+
 		// Entry Object and Contructors
 		Entry(int column, double value)
 		{
@@ -29,7 +29,7 @@ public class Matrix
 			this.value = value;
 		}
 
-		//equals() 
+		//equals()
 		// tests whether List Object is the as called object
 		public boolean equals(Object otherObject)
 		{
@@ -54,6 +54,24 @@ public class Matrix
 
 	// Acess functions
 
-	getSize();
+	//getsize()
+	//returns size of the matrix
+	public int getSize()
+	{
+		return this.size;
+	}
 
+	// getNNZ()
+	// returns the number of non-zeros in the matrix
+	public int getNNZ()
+	{
+		return nonZero;
+	}
+
+	// equals()
+	// does the argument equal the the existing object
+	public boolean equals(Object X)
+	{
+
+	}
 }
