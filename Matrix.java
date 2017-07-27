@@ -85,7 +85,7 @@ public class Matrix
 		}
 		else
 		{
-			for (int i = 1; i < this.size; i++)
+			for (int i = 1; i <= this.size; i++)
 			{
 				if (same == false)
 				{
@@ -101,7 +101,7 @@ public class Matrix
 					this.matrixArray[i].front();
 					otherMatrix.matrixArray[i].front();
 
-					while(same == true)
+					while(same == true && this.matrixArray[i].index() >= 0)
 					{
 
 						Entry thisEntry = (Entry)this.matrixArray[i].get();
@@ -126,7 +126,7 @@ public class Matrix
 	// Sets matrix to zero
 	public void makeZero()
 	{
-		for (int i = 0; i < size; i ++)
+		for (int i = 0; i <= size; i ++)
 		{
 			if (matrixArray[i] == null)
 			{
@@ -149,5 +149,60 @@ public class Matrix
 				}
 		}
 	}
+	// copy()
+	// iterates this Matrix and returns the copy
+	public Matrix copy()
+	{	Matrix copyMatrix = new Matrix(size);
+		if (matrixArray == null)
+		{
+			copyMatrix = null;
+		}
+		else if (size == 0)
+		{
+			return copyMatrix;
+		}
+		else
+		{
+
+			for (int i = 1; i <= size ; i++) 
+			{
+				matrixArray[i].front();
+				while (this.matrixArray[i].index() >= 0)
+				{
+					Entry thisEntry = (Entry)this.matrixArray[i].get();
+					Entry copyEntry = thisEntry;
+					copyMatrix.matrixArray[i].append(copyEntry);
+					this.matrixArray[i].moveNext();
+				}	
+			}
+		}
+		return copyMatrix;
+	}
+
+	// changes ith row, jth column of this Matrix to x
+	// pre: 1<=i<=getSize(), 1<=j<=getSize()
+	void changeEntry(int i, int j, double x)
+	{
+		if ((i < 1 || i > size) || (j < 0 || j > size))
+		{
+			throw new RuntimeException("Error! changeEntry() " + 
+				"Input must be within size.");
+		}
+		else 
+		{
+			matrixArray[i].front();
+			Entry thisEntry = (Entry) matrixArray[i].get();
+			while (thisEntry.column != j || matrixArray[i].index() >= 0)
+			{
+				matrixArray[i].moveNext();
+				thisEntry = (Entry) matrixArray[i].get();
+			}
+			Entry entryChange = new Entry(j, x);
+			matrixArray[i].insertBefore(thisEntry);
+			matrixArray[i].delete();
+		}
+
+	}
+ 
 }
 

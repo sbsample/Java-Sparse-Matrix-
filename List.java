@@ -210,7 +210,7 @@ public class List
 
 	}
 
-	public void append(int data)
+	public void append(Object data)
 	{
 		Node n = new Node(data);
 		if (front == null && back == null)
@@ -228,7 +228,7 @@ public class List
 		length += 1;
 	}
 
-	public void insertBefore(int data)
+	public void insertBefore(Object data)
 	{
 		
 		Node n = new Node(data);
@@ -259,7 +259,7 @@ public class List
 
 	}
 
-	public void insertAfter(int data)
+	public void insertAfter(Object data)
 	{
 		Node n = new Node(data);
 		if (cursor < length - 1 && cursor != -1)
