@@ -100,8 +100,7 @@ public class Matrix
 				{
 					this.matrixArray[i].front();
 					otherMatrix.matrixArray[i].front();
-					Entry thisEntry;
-					Entry otherEntry;
+
 					while(same == true)
 					{
 
@@ -111,8 +110,8 @@ public class Matrix
 						{
 							same = false;
 						}
-						this.matrixArray[i].next();
-						otherMatrix.matrixArray[i].next();
+						this.matrixArray[i].moveNext();
+						otherMatrix.matrixArray[i].moveNext();
 					}
 				}
 			}
@@ -137,14 +136,14 @@ public class Matrix
 				{
 					List thisList = (List) matrixArray[i];
 					thisList.front();
-					while(List.get() >= 0)
+					while(thisList.index() >= 0)
 					{
-						Entry thisEntry = (Entry) thisList.get().value;
+						Entry thisEntry = (Entry) this.matrixArray[i].get();
 						if(thisEntry != null)
 						{
 							thisEntry.value = 0.0;
 						}
-						thisList.next();
+						thisList.moveNext();
 
 					}
 				}
