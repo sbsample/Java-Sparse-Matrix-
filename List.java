@@ -184,7 +184,7 @@ public class List
 		}
 	}
 
-	public void prepend(int data)
+	public void prepend(Object data)
 	{
 		Node n = new Node(data);
 		if (front == null && back == null)
@@ -285,13 +285,11 @@ public class List
 		}
 	}
 
-	public void deleteFront(List L)
+	public void deleteFront()
 	{
-		Node temp;
 		
 		if (length > 1 && cursor == -1)
 		{
-			temp = front;
 			front = front.next;
 			front.previous = null;
 			length -= 1;
@@ -299,7 +297,6 @@ public class List
 		}
 		else if (length > 1 && cursor != 0)
 		{
-			temp = front;
 			front = front.next;
 			front.previous = null;
 			length -= 1;
@@ -309,7 +306,6 @@ public class List
 		
 		else if (length > 1 && cursor == 0)
 		{
-			temp = front;
 			front = front.next;
 			front.previous = null;
 			length -= 1;
@@ -328,7 +324,7 @@ public class List
 		
 		else if (length == 1 && cursor == -1)
 		{
-			temp = front;
+			
 			front = front.next;
 			length = 0;
 			
