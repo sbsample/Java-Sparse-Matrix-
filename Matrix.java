@@ -10,7 +10,7 @@ public class Matrix
 	{
 		this.size = size;
 		nonZero = 0;
-		matrixArray = new List[size];
+		matrixArray = new List[size + 1];
 		for (int i = 0; i <= size; i++)
 		{
 			matrixArray[i] = new List();
@@ -72,7 +72,37 @@ public class Matrix
 	// equals()
 	// does the argument equal the the existing object
 	public boolean equals(Object X)
-	{
-		return false;
+	{	
+		boolean same = true;
+		Matrix otherMatrix = (Matrix) X;
+		if (otherMatrix.getSize() != this.getSize())
+		{
+			same = false;	
+		}
+		else if (otherMatrix.getNNZ() != this.getNNZ())
+		{
+			same = false;
+		}
+		else
+		{
+			for (int i = 1; i < this.size; i++)
+			{
+				if (same == false)
+				{
+					break;
+				}
+				else if (otherMatrix.matrixArray[i].length() != this.matrixArray[i].length())
+				{
+					same = false;
+					break;
+				} 
+				else if ( otherMatrix.matrixArray[i].equals(this.matrixArray[i]) )
+				{
+					same = false;
+				}
+			}
+		}
+
+		return same;	
 	}
 }
