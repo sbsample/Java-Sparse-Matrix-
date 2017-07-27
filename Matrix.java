@@ -72,12 +72,12 @@ public class Matrix
 	// equals()
 	// does the argument equal the the existing object
 	public boolean equals(Object X)
-	{	
+	{
 		boolean same = true;
 		Matrix otherMatrix = (Matrix) X;
 		if (otherMatrix.getSize() != this.getSize())
 		{
-			same = false;	
+			same = false;
 		}
 		else if (otherMatrix.getNNZ() != this.getNNZ())
 		{
@@ -95,14 +95,60 @@ public class Matrix
 				{
 					same = false;
 					break;
-				} 
-				else if ( otherMatrix.matrixArray[i].equals(this.matrixArray[i]) )
+				}
+				else
 				{
-					same = false;
+					this.matrixArray[i].front();
+					otherMatrix.matrixArray[i].front();
+					Entry thisEntry;
+					Entry otherEntry;
+					while(same == true)
+					{
+
+						Entry thisEntry = (Entry)this.matrixArray[i].get();
+						Entry otherEntry = (Entry)otherMatrix.matrixArray[i].get();
+						if(!thisEntry.equals(otherEntry))
+						{
+							same = false;
+						}
+						this.matrixArray[i].next();
+						otherMatrix.matrixArray[i].next();
+					}
 				}
 			}
 		}
 
-		return same;	
+		return same;
+	}
+
+	//////////Manipulation procedures
+
+	// makeZero()
+	// Sets matrix to zero
+	public void makeZero()
+	{
+		for (int i = 0; i < size; i ++)
+		{
+			if (matrixArray[i] == null)
+			{
+				continue;
+			}
+			else
+				{
+					List thisList = (List) matrixArray[i];
+					thisList.front();
+					while(List.get() >= 0)
+					{
+						Entry thisEntry = (Entry) thisList.get().value;
+						if(thisEntry != null)
+						{
+							thisEntry.value = 0.0;
+						}
+						thisList.next();
+
+					}
+				}
+		}
 	}
 }
+
