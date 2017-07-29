@@ -1,6 +1,6 @@
 public class Matrix
 {
-	private int nonZero;
+	private int nnz;
 	private int size;
 	private List [] matrixArray;
 
@@ -9,7 +9,7 @@ public class Matrix
 	public Matrix(int size)
 	{
 		this.size = size;
-		nonZero = 0;
+		nnz = 0;
 		matrixArray = new List[size + 1];
 		for (int i = 0; i <= size; i++)
 		{
@@ -66,7 +66,7 @@ public class Matrix
 	// returns the number of non-zeros in the matrix
 	public int getNNZ()
 	{
-		return nonZero;
+		return nnz;
 	}
 
 	// equals()
@@ -134,18 +134,7 @@ public class Matrix
 			}
 			else
 			{
-				List thisList = (List) matrixArray[i];
-				thisList.front();
-				while(thisList.index() >= 0)
-				{
-					Entry thisEntry = (Entry) this.matrixArray[i].get();
-					if(thisEntry != null)
-					{
-						thisEntry.value = 0.0;
-					}
-					thisList.moveNext();
-
-				}
+				matrixArray[i].clear();
 			}
 		}
 		nnz = 0;
@@ -195,17 +184,31 @@ public class Matrix
 		{
 			matrixArray[i].front();
 			Entry thisEntry = (Entry) matrixArray[i].get();
-			while (thisEntry.column != j || matrixArray[i].index() >= 0)
+			while (matrixArray[i].index() >= 0 && thisEntry.column < j)
 			{
 				matrixArray[i].moveNext();
 				thisEntry = (Entry) matrixArray[i].get();
 			}
-			Entry entryChange = new Entry(j, x);
-			matrixArray[i].insertBefore(thisEntry);
-			matrixArray[i].delete();
+			if (x != 0 && matrixArray[i].index() == -1)
+			{
+				Entry entryChange = new Entry(j, x);
+				matrixArray[i].append(thisEntry);
+				nnz++;
+			}
+			else if (thisEntry.column == j)
+			{
+				if (x != 0)
+				{
+					thisEntry.value = x;
+				}
+				else
+				{
+					matrixArray[i].delete();
+					nnz--;
+				}
+			}
 		}
-		nnz += 1;
-	}
+	} 
 
 	Matrix scalarMult(double x)
 	{
@@ -230,6 +233,7 @@ public class Matrix
 					Entry scalarEntry = new Entry(thisEntry.column, scalarValue);
 					scalarMatrix.matrixArray[i].append(scalarEntry);
 					matrixArray[i].moveNext(); 
+					nnz++;
 
 				}
 
@@ -363,8 +367,7 @@ public class Matrix
 						{
 							result = thisEntry.value - bEntry.value;
 						}
-						asEntry = new Entry(thisEntry.column, result);
-						asMatrix.matrixArray[i].append(asEntry);
+						asMatrix.changeEntry(i, thisEntry.column, result);
 						matrixArray[i].moveNext();
 						B.matrixArray[i].moveNext();
 					}
