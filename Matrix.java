@@ -133,21 +133,22 @@ public class Matrix
 				continue;
 			}
 			else
+			{
+				List thisList = (List) matrixArray[i];
+				thisList.front();
+				while(thisList.index() >= 0)
 				{
-					List thisList = (List) matrixArray[i];
-					thisList.front();
-					while(thisList.index() >= 0)
+					Entry thisEntry = (Entry) this.matrixArray[i].get();
+					if(thisEntry != null)
 					{
-						Entry thisEntry = (Entry) this.matrixArray[i].get();
-						if(thisEntry != null)
-						{
-							thisEntry.value = 0.0;
-						}
-						thisList.moveNext();
-
+						thisEntry.value = 0.0;
 					}
+					thisList.moveNext();
+
 				}
+			}
 		}
+		nnz = 0;
 	}
 	// copy()
 	// iterates this Matrix and returns the copy
@@ -173,6 +174,8 @@ public class Matrix
 					Entry copyEntry = thisEntry;
 					copyMatrix.matrixArray[i].append(copyEntry);
 					this.matrixArray[i].moveNext();
+					copyMatrix.nnz++;
+
 				}	
 			}
 		}
@@ -201,8 +204,212 @@ public class Matrix
 			matrixArray[i].insertBefore(thisEntry);
 			matrixArray[i].delete();
 		}
+		nnz += 1;
+	}
 
+	Matrix scalarMult(double x)
+	{
+		Matrix scalarMatrix = new Matrix(size);
+		if (x == 0.0 || size == 0)
+		{
+			return scalarMatrix;
+		}
+		for (int i = 1; i <= size; i++)
+		{
+			if (matrixArray[i] == null)
+			{
+				continue;
+			}
+			else
+			{
+				matrixArray[i].front();
+				while (matrixArray[i].index() >= 0)
+				{
+					Entry thisEntry = (Entry) matrixArray[i].get();
+					double scalarValue = thisEntry.value * x;
+					Entry scalarEntry = new Entry(thisEntry.column, scalarValue);
+					scalarMatrix.matrixArray[i].append(scalarEntry);
+					matrixArray[i].moveNext(); 
+
+				}
+
+			}
+		}
+
+		return scalarMatrix;
+	}
+
+	//transpose()
+	//
+	public Matrix transpose()
+	{
+		Matrix transMatrix = new Matrix(size);
+		for(int i = 0; i <= size; i++)
+		{
+			matrixArray[i].front();
+			while( matrixArray[i].index() >=0)
+			{
+				Entry transEntry = (Entry) matrixArray[i].get();
+				int temp = transEntry.column - 1; 
+				transMatrix.matrixArray[temp].append(new Entry(i + 1, transEntry.value));
+				matrixArray[i].moveNext();
+			}
+		}
+		
+		return transMatrix;
+	}
+
+	//add()
+	// returns a new Matrix that is the sum of this Matrix with M
+	public Matrix add(Matrix M)
+	{
+		boolean addSwitch = true; 
+		return addOrSub( M, addSwitch);
+		
 	}
  
+ 	//sub()
+ 	// returns a new Matrix that is the difference of this Matrix with M
+	public Matrix sub(Matrix M)
+	{
+		boolean subSwitch = false;
+		return addOrSub(M, subSwitch);
+	}
+
+	public Matrix mult(Matrix M)
+	{
+		M = M.transpose();
+		Matrix multMatrix = new Matrix(size);
+		for (int i = 1; i <= size; i++)
+		{
+			for (int j = 1; j <= size; j++)
+			{
+				multMatrix.changeEntry(i, j, dot(this.matrixArray[i], M.matrixArray[j]));
+			}
+		}
+		return multMatrix;
+	}
+
+
+	// Helper functions
+
+	// addOrSub()
+	// does the computing for add() and sub()
+	public Matrix addOrSub(Matrix B, boolean someBool)
+	{
+		Matrix asMatrix = new Matrix(size); 
+		if (!this.equals(B))
+		{
+			throw new RuntimeException("Error! add() or sub() " + 
+				"Matrices not of equal size.");
+		}
+		else if (this.equals(B))
+		{
+			this.scalarMult(2);
+		}
+		else
+		{
+			
+			for(int i = 0; i <= size; i++)
+			{
+				matrixArray[i].moveFront();
+				B.matrixArray[i].moveFront();
+				while( matrixArray[i].index() >=0 && B.matrixArray[i].index() >=0)
+				{	Entry thisEntry = (Entry) matrixArray[i].get();
+					Entry bEntry = (Entry) B.matrixArray[i].get();
+					Entry asEntry = null;
+					if (matrixArray[i].index() == -1)
+					{
+						while (B.matrixArray[i].index() >= 0)
+						{
+							asEntry = bEntry;
+							asMatrix.matrixArray[i].append(asEntry);
+							B.matrixArray[i].moveNext();
+							asMatrix.nnz++;
+						}
+					}
+					else if (B.matrixArray[i].index() == -1)
+					{
+						while (matrixArray[i].index() >= 0)
+						{
+							asEntry = thisEntry;
+							asMatrix.matrixArray[i].append(asEntry);
+							matrixArray[i].moveNext();
+							asMatrix.nnz++;
+						}
+					}
+					else if (thisEntry.column > bEntry.column)
+					{
+						asEntry = bEntry;
+						asMatrix.matrixArray[i].append(asEntry);
+						B.matrixArray[i].moveNext(); 
+						asMatrix.nnz++;
+					}
+					else if (thisEntry.column < bEntry.column)
+					{
+						asEntry = thisEntry;
+						asMatrix.matrixArray[i].append(asEntry);
+						matrixArray[i].moveNext();
+						asMatrix.nnz++; 
+					}
+					else
+					{	//if add == true then the two Entry values will be summed, else subtract
+						double result;
+						if (someBool == true)
+						{
+							result = thisEntry.value + bEntry.value;
+						}
+						else
+						{
+							result = thisEntry.value - bEntry.value;
+						}
+						asEntry = new Entry(thisEntry.column, result);
+						asMatrix.matrixArray[i].append(asEntry);
+						matrixArray[i].moveNext();
+						B.matrixArray[i].moveNext();
+					}
+
+				}
+			}
+
+		}
+		return asMatrix;		
+	}
+
+	// dot()
+	// does the dot dirty
+
+	private double dot(List A, List B)
+	{
+		double sum = 0;
+		B.moveFront();
+		A.moveFront();
+		while(B.index() >= 0 && A.index() >= 0)
+		{
+			Entry bEntry = (Entry)(B.get());
+			Entry thisEntry = (Entry)(A.get()); 
+			if(thisEntry.column == bEntry.column)
+			{
+				sum += bEntry.value * thisEntry.value; 
+				A.moveNext();
+				B.moveNext();
+			}
+			else if(thisEntry.column < bEntry.column)
+			{
+				sum = 0;
+				A.moveNext();
+			}
+			else
+			{	
+				sum = 0;
+				B.moveNext();
+			}
+		}
+		return sum; 
+	}
+
+
+
+
 }
 
