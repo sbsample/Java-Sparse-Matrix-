@@ -175,61 +175,56 @@ public class Matrix
 	// pre: 1<=i<=getSize(), 1<=j<=getSize()
 	void changeEntry(int i, int j, double x)
 	{
-		if ((i < 1 || i > size) || (j < 0 || j > size))
+		Entry entryChange = new Entry(j, x);
+		matrixArray[i].moveFront();
+		if (matrixArray[i].index() == -1 )
 		{
-			throw new RuntimeException("Error! changeEntry() " + 
-				"Input must be within size.");
+			if (x != 0)
+			{
+
+				matrixArray[i].append(entryChange);
+				nnz++;
+
+			}
 		}
-		else 
+		Entry thisEntry = null;
+		if (matrixArray[i].length() > 0)
 		{
-			Entry thisEntry = null;
-			if (matrixArray[i].length() > 0)
+			
+			thisEntry = (Entry) matrixArray[i].get();
+			while (matrixArray[i].index() >= 0 && thisEntry.column < j )
 			{
-				matrixArray[i].moveFront();
-				thisEntry = (Entry) matrixArray[i].get();
-				while (matrixArray[i].index() >= 0 && thisEntry.column < j )
+				matrixArray[i].moveNext();
+				if (matrixArray[i].index() != -1)
 				{
-					matrixArray[i].moveNext();
-					if (matrixArray[i].index() != -1)
-					{
-						thisEntry = (Entry) matrixArray[i].get();
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-			Entry entryChange = new Entry(j, x);
-			if (matrixArray[i].index() == -1 )
-			{
-				if (x != 0)
-				{
-
-					matrixArray[i].append(entryChange);
-					nnz++;
-
-				}
-			}
-			else if (thisEntry.column == j)
-			{
-				if (x == 0)
-				{
-					matrixArray[i].delete();
-					nnz--;
+					thisEntry = (Entry) matrixArray[i].get();
 				}
 				else
 				{
-					thisEntry.value = x;
-					
+					break;
 				}
 			}
-			else if (thisEntry.column > j && x != 0)
-			{
-				matrixArray[i].insertBefore(entryChange);
-			}
-
 		}
+		
+		else if (thisEntry.column == j)
+		{
+			if (x == 0)
+			{
+				matrixArray[i].delete();
+				nnz--;
+			}
+			else
+			{
+				thisEntry.value = x;
+				
+			}
+		}
+		else if (thisEntry.column > j && x != 0)
+		{
+			matrixArray[i].insertBefore(entryChange);
+		}
+
+		
 	} 
 
 	Matrix scalarMult(double x)
@@ -439,6 +434,20 @@ public class Matrix
 			}
 		}
 		return sum; 
+	}
+
+	public String toString() 
+	{
+		String finalStr = "";
+		for(int i = 0; i <= size; i++) 
+		{
+			if(matrixArray[i].length() < 1) 
+			{
+				continue;
+			}
+			finalStr = finalStr + (i+1)+":"+matrixArray[i].toString()+"\n";
+		}
+		return finalStr;
 	}
 
 
