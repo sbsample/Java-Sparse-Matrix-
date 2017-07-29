@@ -1,3 +1,8 @@
+//Staunton Sample
+//pa3
+//CMPS 101
+//List.java
+
 public class List
 {
 	private Node front;
@@ -65,16 +70,7 @@ public class List
 //Finds and returns element at given cursor location
 	public Object get()  
 	{
-		if (length == 0)
-		{
-			throw new RuntimeException("Error! get() " + 
-				"called on an empty list.");
-		}
-		else
-		{	
-			return index.value;
-		}
-	
+		return index.value;
 	}
 
 	public boolean equals(Object M)
@@ -125,6 +121,10 @@ public class List
 		{
 			cursor = 0;
 			index = front;
+		}
+		else
+		{
+
 		} 
 	}
 

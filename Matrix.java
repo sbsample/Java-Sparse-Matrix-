@@ -175,22 +175,10 @@ public class Matrix
 	// pre: 1<=i<=getSize(), 1<=j<=getSize()
 	void changeEntry(int i, int j, double x)
 	{
-		Entry entryChange = new Entry(j, x);
-		matrixArray[i].moveFront();
-		if (matrixArray[i].index() == -1 )
-		{
-			if (x != 0)
-			{
-
-				matrixArray[i].append(entryChange);
-				nnz++;
-
-			}
-		}
 		Entry thisEntry = null;
 		if (matrixArray[i].length() > 0)
 		{
-			
+			matrixArray[i].moveFront();
 			thisEntry = (Entry) matrixArray[i].get();
 			while (matrixArray[i].index() >= 0 && thisEntry.column < j )
 			{
@@ -205,7 +193,17 @@ public class Matrix
 				}
 			}
 		}
-		
+		Entry entryChange = new Entry(j, x);
+		if (matrixArray[i].index() == -1 )
+		{
+			if (x != 0)
+			{
+
+				matrixArray[i].append(entryChange);
+				nnz++;
+
+			}
+		}
 		else if (thisEntry.column == j)
 		{
 			if (x == 0)

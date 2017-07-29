@@ -1,0 +1,12 @@
+This is sparse matric calculator. It will read through a given matrix of doubles and create an array of lined lists from the non zero numbers. It uses a double linked list ADT and a matrix ADT
+
+Use make to compile the executable
+Use make clean to remove executable
+
+The program contains the following files
+
+Sparse.java - Entry point of the program, IO and calls Matrix ADT
+List.java - double linked list interface
+Matrix.java - Matrix calculator interface
+README - this.reading
+Makefile - compiles the program
