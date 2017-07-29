@@ -38,25 +38,12 @@ public class List
 
 	public int index()
 	{
-		if (length < 0)
-		{
-			throw new RuntimeException("Error! index() " + 
-				"called on an empty list.");
-		}
-		else
-		{
-			return cursor;
-		}	
+		return cursor;	
 	}
 
 	public Object front()
 	{
-		if (length == 0)
-		{
-			throw new RuntimeException("Error! front() " + 
-				"called on an empty list.");
-		}
-		else
+		
 		{
 			return front.value;	
 		}
@@ -82,11 +69,6 @@ public class List
 		{
 			throw new RuntimeException("Error! get() " + 
 				"called on an empty list.");
-		}
-		else if (cursor == -1)
-		{
-			throw new RuntimeException("Error: get() " + 
-				"cursor undefined.");
 		}
 		else
 		{	

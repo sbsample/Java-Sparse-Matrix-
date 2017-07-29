@@ -98,8 +98,8 @@ public class Matrix
 				}
 				else
 				{
-					this.matrixArray[i].front();
-					otherMatrix.matrixArray[i].front();
+					this.matrixArray[i].moveFront();
+					otherMatrix.matrixArray[i].moveFront();
 
 					while(same == true && this.matrixArray[i].index() >= 0)
 					{
@@ -156,7 +156,7 @@ public class Matrix
 
 			for (int i = 1; i <= size ; i++) 
 			{
-				matrixArray[i].front();
+				matrixArray[i].moveFront();
 				while (this.matrixArray[i].index() >= 0)
 				{
 					Entry thisEntry = (Entry)this.matrixArray[i].get();
@@ -182,31 +182,53 @@ public class Matrix
 		}
 		else 
 		{
-			matrixArray[i].front();
-			Entry thisEntry = (Entry) matrixArray[i].get();
-			while (matrixArray[i].index() >= 0 && thisEntry.column < j)
+			Entry thisEntry = null;
+			if (matrixArray[i].length() > 0)
 			{
-				matrixArray[i].moveNext();
+				matrixArray[i].moveFront();
 				thisEntry = (Entry) matrixArray[i].get();
+				while (matrixArray[i].index() >= 0 && thisEntry.column < j )
+				{
+					matrixArray[i].moveNext();
+					if (matrixArray[i].index() != -1)
+					{
+						thisEntry = (Entry) matrixArray[i].get();
+					}
+					else
+					{
+						break;
+					}
+				}
 			}
-			if (x != 0 && matrixArray[i].index() == -1)
-			{
-				Entry entryChange = new Entry(j, x);
-				matrixArray[i].append(thisEntry);
-				nnz++;
-			}
-			else if (thisEntry.column == j)
+			Entry entryChange = new Entry(j, x);
+			if (matrixArray[i].index() == -1 )
 			{
 				if (x != 0)
 				{
-					thisEntry.value = x;
+
+					matrixArray[i].append(entryChange);
+					nnz++;
+
 				}
-				else
+			}
+			else if (thisEntry.column == j)
+			{
+				if (x == 0)
 				{
 					matrixArray[i].delete();
 					nnz--;
 				}
+				else
+				{
+					thisEntry.value = x;
+					
+				}
 			}
+			else if (thisEntry.column > j && x != 0)
+			{
+				matrixArray[i].insertBefore(entryChange);
+			}
+
 		}
 	} 
 
@@ -225,15 +247,14 @@ public class Matrix
 			}
 			else
 			{
-				matrixArray[i].front();
+				matrixArray[i].moveFront();
 				while (matrixArray[i].index() >= 0)
 				{
 					Entry thisEntry = (Entry) matrixArray[i].get();
-					double scalarValue = thisEntry.value * x;
-					Entry scalarEntry = new Entry(thisEntry.column, scalarValue);
-					scalarMatrix.matrixArray[i].append(scalarEntry);
+					Entry scalarEntry = new Entry(thisEntry.column, thisEntry.value * x);
+					scalarMatrix.matrixArray[i].append(scalarEntry);	
 					matrixArray[i].moveNext(); 
-					nnz++;
+					scalarMatrix.nnz++;
 
 				}
 
@@ -250,7 +271,7 @@ public class Matrix
 		Matrix transMatrix = new Matrix(size);
 		for(int i = 0; i <= size; i++)
 		{
-			matrixArray[i].front();
+			matrixArray[i].moveFront();
 			while( matrixArray[i].index() >=0)
 			{
 				Entry transEntry = (Entry) matrixArray[i].get();
@@ -259,7 +280,7 @@ public class Matrix
 				matrixArray[i].moveNext();
 			}
 		}
-		
+		transMatrix.nnz = this.nnz;
 		return transMatrix;
 	}
 
@@ -302,32 +323,45 @@ public class Matrix
 	public Matrix addOrSub(Matrix B, boolean someBool)
 	{
 		Matrix asMatrix = new Matrix(size); 
-		if (!this.equals(B))
+		if (someBool == false)
+		{
+			B = B.scalarMult(-1);
+		}
+		if (this.size != B.size)
 		{
 			throw new RuntimeException("Error! add() or sub() " + 
 				"Matrices not of equal size.");
 		}
 		else if (this.equals(B))
 		{
-			this.scalarMult(2);
+			asMatrix = this.scalarMult(2);
 		}
 		else
 		{
 			
+
 			for(int i = 0; i <= size; i++)
 			{
 				matrixArray[i].moveFront();
 				B.matrixArray[i].moveFront();
-				while( matrixArray[i].index() >=0 && B.matrixArray[i].index() >=0)
-				{	Entry thisEntry = (Entry) matrixArray[i].get();
-					Entry bEntry = (Entry) B.matrixArray[i].get();
+				while( matrixArray[i].index() >=0 || B.matrixArray[i].index() >=0)
+				{	
 					Entry asEntry = null;
+					Entry bEntry = null;
+					Entry thisEntry = null;
+					if (matrixArray[i].index() != -1)
+					{
+						thisEntry = (Entry) matrixArray[i].get();
+					}
+					if (B.matrixArray[i].index() != -1)
+					{
+						bEntry = (Entry) B.matrixArray[i].get();
+					}		
 					if (matrixArray[i].index() == -1)
 					{
 						while (B.matrixArray[i].index() >= 0)
 						{
-							asEntry = bEntry;
-							asMatrix.matrixArray[i].append(asEntry);
+							asMatrix.matrixArray[i].append(bEntry);
 							B.matrixArray[i].moveNext();
 							asMatrix.nnz++;
 						}
@@ -336,38 +370,34 @@ public class Matrix
 					{
 						while (matrixArray[i].index() >= 0)
 						{
-							asEntry = thisEntry;
-							asMatrix.matrixArray[i].append(asEntry);
+							asMatrix.matrixArray[i].append(thisEntry);
 							matrixArray[i].moveNext();
 							asMatrix.nnz++;
 						}
 					}
 					else if (thisEntry.column > bEntry.column)
 					{
-						asEntry = bEntry;
-						asMatrix.matrixArray[i].append(asEntry);
+						
+						asMatrix.matrixArray[i].append(bEntry);
 						B.matrixArray[i].moveNext(); 
 						asMatrix.nnz++;
 					}
 					else if (thisEntry.column < bEntry.column)
 					{
-						asEntry = thisEntry;
-						asMatrix.matrixArray[i].append(asEntry);
+						asMatrix.matrixArray[i].append(thisEntry);
 						matrixArray[i].moveNext();
 						asMatrix.nnz++; 
 					}
 					else
 					{	//if add == true then the two Entry values will be summed, else subtract
-						double result;
-						if (someBool == true)
+						
+						double result = thisEntry.value + bEntry.value;
+						if (result != 0)
 						{
-							result = thisEntry.value + bEntry.value;
+							asEntry = new Entry(thisEntry.column,result);
+							asMatrix.matrixArray[i].append(asEntry);	
 						}
-						else
-						{
-							result = thisEntry.value - bEntry.value;
-						}
-						asMatrix.changeEntry(i, thisEntry.column, result);
+						asMatrix.nnz++;
 						matrixArray[i].moveNext();
 						B.matrixArray[i].moveNext();
 					}
