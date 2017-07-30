@@ -73,51 +73,23 @@ public class Matrix
 	// does the argument equal the the existing object
 	public boolean equals(Object X)
 	{
-		boolean same = true;
+		
 		Matrix otherMatrix = (Matrix) X;
 		if (otherMatrix.getSize() != this.getSize())
 		{
-			same = false;
+			return false;
 		}
-		else if (otherMatrix.getNNZ() != this.getNNZ())
+		for (int i = 1; i <= size; i++)
 		{
-			same = false;
-		}
-		else
-		{
-			for (int i = 1; i <= this.size; i++)
+			if (matrixArray[i].equals(otherMatrix.matrixArray[i]))
 			{
-				if (same == false)
-				{
-					break;
-				}
-				else if (otherMatrix.matrixArray[i].length() != this.matrixArray[i].length())
-				{
-					same = false;
-					break;
-				}
-				else
-				{
-					this.matrixArray[i].moveFront();
-					otherMatrix.matrixArray[i].moveFront();
-
-					while(same == true && this.matrixArray[i].index() >= 0)
-					{
-
-						Entry thisEntry = (Entry)this.matrixArray[i].get();
-						Entry otherEntry = (Entry)otherMatrix.matrixArray[i].get();
-						if(!thisEntry.equals(otherEntry))
-						{
-							same = false;
-						}
-						this.matrixArray[i].moveNext();
-						otherMatrix.matrixArray[i].moveNext();
-					}
-				}
-			}
+				return true;
+				
+			}	
 		}
+		
 
-		return same;
+		return false;
 	}
 
 	//////////Manipulation procedures
@@ -174,57 +146,61 @@ public class Matrix
 	// changes ith row, jth column of this Matrix to x
 	// pre: 1<=i<=getSize(), 1<=j<=getSize()
 	void changeEntry(int i, int j, double x)
-	{
-		Entry thisEntry = null;
-		if (matrixArray[i].length() > 0)
-		{
-			matrixArray[i].moveFront();
-			thisEntry = (Entry) matrixArray[i].get();
-			while (matrixArray[i].index() >= 0 && thisEntry.column < j )
-			{
-				matrixArray[i].moveNext();
-				if (matrixArray[i].index() != -1)
-				{
-					thisEntry = (Entry) matrixArray[i].get();
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-		Entry entryChange = new Entry(j, x);
-		if (matrixArray[i].index() == -1 )
-		{
-			if (x != 0)
-			{
+  {
+    Entry entryChange = new Entry(j, x);
+    if (matrixArray[i].index() == -1 && matrixArray[i].length() == 0 )
+    {
+    	if (x != 0)
+      	{
 
-				matrixArray[i].append(entryChange);
-				nnz++;
-
-			}
+        	matrixArray[i].append(entryChange);
+        	nnz++;
 		}
-		else if (thisEntry.column == j)
-		{
-			if (x == 0)
-			{
-				matrixArray[i].delete();
-				nnz--;
-			}
-			else
-			{
-				thisEntry.value = x;
-				
-			}
-		}
-		else if (thisEntry.column > j && x != 0)
-		{
-			matrixArray[i].insertBefore(entryChange);
-		}
+      	return; // return always
+    }
+    matrixArray[i].moveFront();
+    Entry thisEntry = (Entry) matrixArray[i].get();
+    while (matrixArray[i].index() >= 0 && thisEntry.column <= j ) // including j
+    {
+      	thisEntry = (Entry) matrixArray[i].get();
+      	if (matrixArray[i].index() == -1 )
+      	{
+        	if (x != 0)
+        	{
+         		matrixArray[i].append(entryChange);
+            	nnz++;
+        	}
+        return; // you forgot to do this before
+        }
+        else if (thisEntry.column == j)
+        {
+        	if (x == 0)
+        	{
+          		matrixArray[i].delete();
+          		nnz--;
+        	}
+        	else
+        	{
+          		thisEntry.value = x;
+        	}
+        	return; // forgot to do this before
+      	}
+      	else if (thisEntry.column > j) // x == 0 inside
+      	{
+        	if (x == 0) return;
+        	matrixArray[i].insertBefore(entryChange);
+        	nnz++;
+        	return; /// forgot to do this before
+      	}
 
-		
-	} 
-
+      	matrixArray[i].moveNext();
+    }
+    if (x == 0) return;
+    matrixArray[i].append(entryChange); // it fell off the list
+    nnz++;
+} 
+	// scalarMult()
+	// performs scalar multiplication
 	Matrix scalarMult(double x)
 	{
 		Matrix scalarMatrix = new Matrix(size);
@@ -293,7 +269,8 @@ public class Matrix
 		boolean subSwitch = false;
 		return addOrSub(M, subSwitch);
 	}
-
+	//mult()
+	//performs multiplication on two Matrices
 	public Matrix mult(Matrix M)
 	{
 		M = M.transpose();
@@ -331,66 +308,48 @@ public class Matrix
 		}
 		else
 		{
-			
-
 			for(int i = 0; i <= size; i++)
 			{
 				matrixArray[i].moveFront();
 				B.matrixArray[i].moveFront();
+				
 				while( matrixArray[i].index() >=0 || B.matrixArray[i].index() >=0)
 				{	
-					Entry asEntry = null;
-					Entry bEntry = null;
-					Entry thisEntry = null;
-					if (matrixArray[i].index() != -1)
-					{
-						thisEntry = (Entry) matrixArray[i].get();
-					}
-					if (B.matrixArray[i].index() != -1)
-					{
-						bEntry = (Entry) B.matrixArray[i].get();
-					}		
+					Entry thisEntry = (Entry) matrixArray[i].get();
+					Entry bEntry = (Entry) B.matrixArray[i].get();
+							
 					if (matrixArray[i].index() == -1)
 					{
 						while (B.matrixArray[i].index() >= 0)
 						{
-							asMatrix.matrixArray[i].append(bEntry);
+							asMatrix.changeEntry(i, bEntry.column, bEntry.value);
 							B.matrixArray[i].moveNext();
-							asMatrix.nnz++;
 						}
 					}
 					else if (B.matrixArray[i].index() == -1)
 					{
 						while (matrixArray[i].index() >= 0)
 						{
-							asMatrix.matrixArray[i].append(thisEntry);
+							asMatrix.changeEntry(i, thisEntry.column, thisEntry.value);;
 							matrixArray[i].moveNext();
-							asMatrix.nnz++;
 						}
 					}
 					else if (thisEntry.column > bEntry.column)
 					{
 						
-						asMatrix.matrixArray[i].append(bEntry);
+						asMatrix.changeEntry(i, bEntry.column, bEntry.value);
 						B.matrixArray[i].moveNext(); 
-						asMatrix.nnz++;
 					}
 					else if (thisEntry.column < bEntry.column)
 					{
-						asMatrix.matrixArray[i].append(thisEntry);
+						asMatrix.changeEntry(i, thisEntry.column, thisEntry.value);
 						matrixArray[i].moveNext();
-						asMatrix.nnz++; 
 					}
 					else
 					{	//if add == true then the two Entry values will be summed, else subtract
 						
 						double result = thisEntry.value + bEntry.value;
-						if (result != 0)
-						{
-							asEntry = new Entry(thisEntry.column,result);
-							asMatrix.matrixArray[i].append(asEntry);	
-						}
-						asMatrix.nnz++;
+						asMatrix.changeEntry(i, thisEntry.column, result);	
 						matrixArray[i].moveNext();
 						B.matrixArray[i].moveNext();
 					}
@@ -433,18 +392,19 @@ public class Matrix
 		}
 		return sum; 
 	}
-
+	// toString()
+	// returns strings
 	public String toString() 
 	{
 		String finalStr = "";
-		for(int i = 0; i <= size; i++) 
+		for (int i = 1; i <= size; ++i) 
 		{
-			if(matrixArray[i].length() < 1) 
-			{
-				continue;
-			}
-			finalStr = finalStr + (i+1)+":"+matrixArray[i].toString()+"\n";
-		}
+      		if ( matrixArray[i].length() != 0 ) 
+      		{
+        		finalStr += String.valueOf(i) + ": ";
+        		finalStr += matrixArray[i].toString() + "\n";
+      		}
+    	}
 		return finalStr;
 	}
 

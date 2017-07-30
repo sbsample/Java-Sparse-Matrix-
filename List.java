@@ -77,12 +77,8 @@ public class List
 	{
 		List L = (List) M;
 		Node thisFinder = this.front;
-		Node lFinder = (Node) L.front;
-		if (L == null)
-		{
-			throw new RuntimeException("Error! equals() " + 
-				"called on an empty list.");
-		}
+		Node lFinder =  L.front;
+		
 		if (L.length != length)
 		{
 			return false;
@@ -351,6 +347,11 @@ public class List
 
 	public void delete()
 	{
+		if (index() != -1 && length() == 1) 
+    	{
+      		clear();
+      		return;
+    	}
 		Node temp;
 		if (index == front)
 		{
