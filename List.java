@@ -11,21 +11,23 @@ public class List
 	private int length;
 	private int cursor;
 
+	//List() creates List
 	public List()
 	{
 		this.front = null;
 		this.back = null;
 		this.index = null;
 		this.length = 0;
-		this.cursor = -1; 
+		this.cursor = -1;
 	}
-
-	private class Node// Node class for Linked List 
+	//Node()
+	//defines Node
+	private class Node// Node class for Linked List
 	{
 		Object value;
 		Node next;
 		Node previous;
-
+		// Node Constructor
 		Node(Object value)// Node Constructor
 		{
 			this.value = value;
@@ -35,31 +37,35 @@ public class List
 
 	}
 // Access Procedures
-
+	//length()
+	//returns length
 	public int length()
 	{
 		return length;
 	}
-
+	//index()
+	//returns cursor
 	public int index()
 	{
-		return cursor;	
+		return cursor;
 	}
-
+	//front()
+	//returns node at front of List
 	public Object front()
 	{
-		
-		{
-			return front.value;	
-		}
-		
-	}
 
+		{
+			return front.value;
+		}
+
+	}
+	//back ()
+	//returns Node at back of list
 	public Object back()
 	{
 		if (length == 0)
 		{
-			 throw new RuntimeException("Error! back() " + 
+			 throw new RuntimeException("Error! back() " +
 				"called on an empty list.");
 		}
 		else
@@ -68,31 +74,33 @@ public class List
 		}
 	}
 //Finds and returns element at given cursor location
-	public Object get()  
+	public Object get()
 	{
 		return index.value;
 	}
 
+	//equals()
+	//returns true if Lists are equal
 	public boolean equals(Object M)
 	{
 		List L = (List) M;
 		Node thisFinder = this.front;
 		Node lFinder =  L.front;
-		
+
 		if (L.length != length)
 		{
 			return false;
 		}
 		for (int i = 0; i < length; i++)
 		{
-			if (lFinder.value != thisFinder.value)
+			if (!lFinder.value.equals(thisFinder.value))
 			{
 				return false;
 			}
 			else
 			{
 				lFinder = lFinder.next;
-				thisFinder = thisFinder.next; 
+				thisFinder = thisFinder.next;
 			}
 
 		}
@@ -101,7 +109,8 @@ public class List
 
 //Manipulation procedures
 
-
+	//clear()
+	//clears list
 	public void clear()
 	{
 		front = null;
@@ -110,7 +119,8 @@ public class List
 		cursor = -1;
 		length = 0;
 	}
-
+	// moveFront()
+	// moves cursor to front
 	public void moveFront()
 	{
 		if (length > 0)
@@ -118,21 +128,20 @@ public class List
 			cursor = 0;
 			index = front;
 		}
-		else
-		{
 
-		} 
 	}
-
+	// moveBack()
+	//moves cursor to back
 	public void moveBack()
 	{
 		if (length > 0)
 		{
 			cursor = length - 1;
 			index = back;
-		} 
+		}
 	}
-
+	// movePrev()
+	// moves cursor back in list
 	public void movePrev()
 	{
 		if (cursor > 0)
@@ -148,6 +157,8 @@ public class List
 		}
 	}
 
+	// moveNext()
+	//moves cursor forward
 	public void moveNext()
 	{
 		if (cursor >= 0 && cursor != length -1)
@@ -162,17 +173,19 @@ public class List
 		}
 	}
 
+	//prepend()
+	//adds item to front of list
 	public void prepend(Object data)
 	{
 		Node n = new Node(data);
 		if (front == null && back == null)
 		{
-			
+
 			front = n;
 			back = n;
 
 		}
-		else 
+		else
 		{
 			n.next = front;
 			front.previous = n;
@@ -181,13 +194,15 @@ public class List
 			{
 				cursor += 1;
 			}
-			
+
 		}
 		length += 1;
 
 
 	}
 
+	// append()
+	//adds item to back of list
 	public void append(Object data)
 	{
 		Node n = new Node(data);
@@ -201,18 +216,20 @@ public class List
 			n.previous = back;
 			back.next = n;
 			back = n;
-			
+
 		}
 		length += 1;
 	}
 
+	//insertBefore
+	// inserts item before cursor
 	public void insertBefore(Object data)
 	{
-		
+
 		Node n = new Node(data);
 		if (cursor > 0)
 		{
-			
+
 			n.next = index;
 			index.previous.next = n;
 			n.previous = index.previous;
@@ -230,19 +247,21 @@ public class List
 		}
 		else
 		{
-			throw new RuntimeException("Error! insertBefore() " + 
+			throw new RuntimeException("Error! insertBefore() " +
 				"called on an undefined cursor.");
 		}
 
 
 	}
 
+	// insertAfter()
+	// inserts after cursor
 	public void insertAfter(Object data)
 	{
 		Node n = new Node(data);
 		if (cursor < length - 1 && cursor != -1)
 		{
-			
+
 			n.previous = index;
 			n.next = index.next;
 			index.next.previous = n;
@@ -254,24 +273,25 @@ public class List
 			n.previous = index;
 			index.next = n;
 			length += 1;
-			back = n; 
+			back = n;
 		}
 		else
 		{
-			throw new RuntimeException("Error! insertAfter() " + 
+			throw new RuntimeException("Error! insertAfter() " +
 				"called on an undefined cursor.");
 		}
 	}
-
+	//deleteFront()
+	//deletes at front of list
 	public void deleteFront()
 	{
-		
+
 		if (length > 1 && cursor == -1)
 		{
 			front = front.next;
 			front.previous = null;
 			length -= 1;
-			
+
 		}
 		else if (length > 1 && cursor != 0)
 		{
@@ -281,7 +301,7 @@ public class List
 			cursor -= 1;
 
 		}
-		
+
 		else if (length > 1 && cursor == 0)
 		{
 			front = front.next;
@@ -298,19 +318,21 @@ public class List
 			index = null;
 			length = 0;
 		}
-		
-		
+
+
 		else if (length == 1 && cursor == -1)
 		{
-			
+
 			front = front.next;
 			length = 0;
-			
+
 		}
 	}
 
+	//deleteBack()
+	//deletes at Back or list
 	public void deleteBack()
-	{	
+	{
 		Node temp;
 		if (length > 1 && cursor < length - 1)
 		{
@@ -318,7 +340,7 @@ public class List
 			back = back.previous;
 			back.next = null;
 			length -= 1;
-			
+
 		}
 		else if (length == 1 && cursor == 0)
 		{
@@ -327,7 +349,7 @@ public class List
 			cursor = -1;
 			index = null;
 			length = 0;
-		} 
+		}
 		else if(length > 1 && cursor == length - 1)
 		{
 			temp = back;
@@ -341,13 +363,15 @@ public class List
 			front = null;
 			back = null;
 			length = 0;
-			
+
 		}
 	}
 
+	// delete()
+	//good ole delete
 	public void delete()
 	{
-		if (index() != -1 && length() == 1) 
+		if (index() != -1 && length() == 1)
     	{
       		clear();
       		return;
@@ -387,7 +411,8 @@ public class List
 	}
 
 	// Other Methods
-
+	// toString
+	//Overides toString
 	public String toString()
 	{
 		Node temp = front;
@@ -397,10 +422,10 @@ public class List
 
 			if ( i == length - 1 )
 			{
-				output += temp.value + ""; 
-			}	
+				output += temp.value + "";
+			}
 			else
-			{	
+			{
 				output += temp.value + " ";
 			}
 			temp = temp.next;
@@ -408,8 +433,8 @@ public class List
 		return output;
 	}
 
-	
 
 
-	
+
+
 }

@@ -10,7 +10,7 @@ class Sparse
 {
 	public static void main(String[] args) throws IOException
 	{
-		if (args.length < 2) 
+		if (args.length < 2)
 		{
 			throw new RuntimeException ("Please call 2 arguments with Sparse");
 		}
@@ -18,28 +18,32 @@ class Sparse
 		PrintWriter out = new PrintWriter(args[1]);
 
 		int size = in.nextInt();
-		int aInt = in.nextInt();
-		int bInt = in.nextInt();
 
 		Matrix A = new Matrix (size);
 		Matrix B = new Matrix (size);
 
-		in.nextLine();
-		for (int i = 1; i <= aInt; i++) 
+		int aInt = in.nextInt();
+		int bInt = in.nextInt();
+
+
+		for (int i = 0; i < aInt; i++)
 		{
 			int row = in.nextInt();
 			int column = in.nextInt();
 			double value = in.nextDouble();
 			A.changeEntry(row,column,value);
 		}
-		in.nextLine();
-		for (int i = 1; i <= bInt; i++)
+
+		for (int i = 0; i < bInt; i++)
 		{
 			int row = in.nextInt();
 			int column = in.nextInt();
 			double value = in.nextDouble();
 			B.changeEntry(row,column,value);
 		}
+
+		in.close();
+
 		out.println("A has "+aInt+" non-zero entries:");
 		out.println(A);
 		out.println("B has "+bInt+" non-zero entries:");
@@ -54,16 +58,16 @@ class Sparse
 		out.println(B.sub(A));
 		out.println("A-A =");
 		out.println(A.sub(A));
+
 		out.println("Transpose(A) =");
 		out.println(A.transpose());
 		out.println("A*B = ");
 		out.println(A.mult(B));
 		out.println("B*B = ");
 		out.println(B.mult(B));
-		
-		in.close();
+
 		out.close();
-		return;
+		// return;
 	}
-	
+
 }
