@@ -156,19 +156,10 @@ public class Matrix
     }
     matrixArray[i].moveFront();
     Entry thisEntry = (Entry) matrixArray[i].get();
-    while (matrixArray[i].index() >= 0 && thisEntry.column <= j ) // including j
+    while (matrixArray[i].index() >= 0 && thisEntry.column != j ) // including j
     {
       thisEntry = (Entry) matrixArray[i].get();
-      if (matrixArray[i].index() == -1 )
-      {
-        if (x != 0)
-        {
-          matrixArray[i].append(entryChange);
-          nnz++;
-        }
-        return;
-      }
-      else if (thisEntry.column == j)
+      if (thisEntry.column == j)
       {
         if (x == 0)
         {
@@ -181,13 +172,14 @@ public class Matrix
         }
         return;
       }
-      else if (thisEntry.column > j) // x == 0 inside
+      else if (thisEntry.column > j ) // x == 0 inside
       {
         if (x == 0) return;
         matrixArray[i].insertBefore(entryChange);
         nnz++;
         return;
       }
+
 
       matrixArray[i].moveNext();
     }
